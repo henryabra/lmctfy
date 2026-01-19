@@ -48,9 +48,9 @@ export function initShare() {
   elements.copyBtn?.addEventListener('click', handleCopy);
 
   // Social share buttons
-  elements.shareTwitter?.addEventListener('click', () => shareToTwitter());
-  elements.shareLinkedin?.addEventListener('click', () => shareToLinkedIn());
-  elements.shareSlack?.addEventListener('click', () => copyForSlack());
+  elements.shareTwitter?.addEventListener('click', shareToTwitter);
+  elements.shareLinkedin?.addEventListener('click', shareToLinkedIn);
+  elements.shareSlack?.addEventListener('click', copyForSlack);
 }
 
 /**
@@ -125,35 +125,36 @@ function showToast(message, duration = 3000) {
 }
 
 /**
- * Share to Twitter/X
+ * Share to X (Twitter)
  */
 function shareToTwitter() {
-  const elements = getElements();
-  const url = elements.shareUrl.value;
-  const text = "Someone asked me a question that could easily be answered by Claude AI... 🤖";
+  const url = document.getElementById('share-url').value;
+  if (!url) return;
 
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-  window.open(twitterUrl, '_blank', 'noopener,noreferrer,width=550,height=420');
+  const text = "Let me Claude that for you 🤖";
+  const xUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  window.open(xUrl, '_blank');
 }
 
 /**
  * Share to LinkedIn
  */
 function shareToLinkedIn() {
-  const elements = getElements();
-  const url = elements.shareUrl.value;
+  const url = document.getElementById('share-url').value;
+  if (!url) return;
 
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-  window.open(linkedinUrl, '_blank', 'noopener,noreferrer,width=550,height=420');
+  window.open(linkedinUrl, '_blank');
 }
 
 /**
  * Copy formatted message for Slack
  */
 async function copyForSlack() {
-  const elements = getElements();
-  const url = elements.shareUrl.value;
-  const message = `Here, let me Claude that for you: ${url}`;
+  const url = document.getElementById('share-url').value;
+  if (!url) return;
+
+  const message = `Let me Claude that for you: ${url}`;
 
   try {
     await navigator.clipboard.writeText(message);
