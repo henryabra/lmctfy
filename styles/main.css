@@ -1003,6 +1003,20 @@ h1 {
     padding: 1.5rem;
     margin: 1rem;
   }
+
+  .share-url-container {
+    flex-wrap: wrap;
+  }
+
+  .share-url-container .share-url {
+    flex: 1 1 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .share-url-container .btn-copy,
+  .share-url-container .btn-preview {
+    flex: 1;
+  }
 }
 
 /* ============================================
