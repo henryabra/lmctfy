@@ -105,6 +105,14 @@ function setupEventListeners() {
   // Cancel redirect button
   elements.cancelBtn?.addEventListener('click', cancelCountdown);
 
+  // Ask Claude button also cancels countdown
+  elements.askClaudeBtn?.addEventListener('click', () => {
+    if (state.countdownInterval) {
+      clearInterval(state.countdownInterval);
+      state.countdownInterval = null;
+    }
+  });
+
   // Handle browser back/forward
   window.addEventListener('popstate', () => {
     const params = new URLSearchParams(window.location.search);
