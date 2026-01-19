@@ -6,6 +6,10 @@
 // DOM Elements (cached on first use)
 let els = null;
 
+// Countdown state
+let countdownInterval = null;
+let countdownSeconds = 5;
+
 function getElements() {
   if (els) return els;
 
@@ -20,6 +24,10 @@ function getElements() {
     shareTwitter: document.getElementById('share-twitter'),
     shareLinkedin: document.getElementById('share-linkedin'),
     shareSlack: document.getElementById('share-slack'),
+    countdownNumber: document.getElementById('countdown-number'),
+    countdownProgress: document.getElementById('countdown-progress'),
+    countdownContainer: document.querySelector('.countdown-container'),
+    cancelBtn: document.getElementById('cancel-redirect'),
   };
 
   return els;
@@ -51,6 +59,9 @@ export function initShare() {
   elements.shareTwitter?.addEventListener('click', shareToTwitter);
   elements.shareLinkedin?.addEventListener('click', shareToLinkedIn);
   elements.shareSlack?.addEventListener('click', copyForSlack);
+
+  // Cancel redirect button
+  elements.cancelBtn?.addEventListener('click', cancelCountdown);
 }
 
 /**
@@ -66,6 +77,9 @@ export function showShareModal(url) {
   setTimeout(() => {
     elements.shareUrl.select();
   }, 100);
+
+  // Start countdown
+  startCountdown(url);
 }
 
 /**
@@ -74,6 +88,62 @@ export function showShareModal(url) {
 export function hideShareModal() {
   const elements = getElements();
   elements.modal.classList.add('hidden');
+  cancelCountdown();
+}
+
+/**
+ * Start the countdown timer
+ */
+function startCountdown(url) {
+  const elements = getElements();
+  let seconds = countdownSeconds;
+
+  // Reset UI
+  elements.countdownContainer.classList.remove('cancelled');
+  elements.countdownNumber.textContent = seconds;
+  elements.countdownProgress.style.transform = 'scaleX(1)';
+  elements.cancelBtn.textContent = 'Cancel';
+
+  // Clear any existing interval
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+
+  // Animate progress bar
+  requestAnimationFrame(() => {
+    elements.countdownProgress.style.transform = 'scaleX(0)';
+    elements.countdownProgress.style.transition = `transform ${countdownSeconds}s linear`;
+  });
+
+  // Start countdown
+  countdownInterval = setInterval(() => {
+    seconds--;
+    elements.countdownNumber.textContent = seconds;
+
+    if (seconds <= 0) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      // Redirect to the URL
+      window.location.href = url;
+    }
+  }, 1000);
+}
+
+/**
+ * Cancel the countdown
+ */
+function cancelCountdown() {
+  const elements = getElements();
+
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+
+  elements.countdownContainer.classList.add('cancelled');
+  elements.countdownNumber.textContent = '—';
+  elements.countdownProgress.style.transition = 'none';
+  elements.cancelBtn.textContent = 'Cancelled';
 }
 
 /**
