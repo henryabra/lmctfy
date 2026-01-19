@@ -10,6 +10,8 @@ import { initShare, showShareModal } from './share.js';
 const state = {
   query: null,
   isPlaying: false,
+  countdownInterval: null,
+  countdownSeconds: 5,
 };
 
 // DOM Elements
@@ -20,6 +22,10 @@ const elements = {
   queryInput: document.getElementById('query-input'),
   skipBtn: document.getElementById('skip-btn'),
   askClaudeBtn: document.getElementById('ask-claude-btn'),
+  countdownNumber: document.getElementById('countdown-number'),
+  countdownProgress: document.getElementById('countdown-progress'),
+  countdownContainer: document.querySelector('.countdown-container'),
+  cancelBtn: document.getElementById('cancel-redirect'),
 };
 
 /**
@@ -62,14 +68,20 @@ function showPlayback() {
   elements.homepage.classList.add('hidden');
   elements.playback.classList.remove('hidden');
 
-  // Set the "Ask Claude" button href
+  // Build Claude URL
   const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(state.query)}`;
-  elements.askClaudeBtn.href = claudeUrl;
+
+  // Set the "Ask Claude" button href
+  if (elements.askClaudeBtn) {
+    elements.askClaudeBtn.href = claudeUrl;
+  }
 
   // Start the animation
   state.isPlaying = true;
   playAnimation(state.query, () => {
     state.isPlaying = false;
+    // Start countdown when animation ends
+    startCountdown(claudeUrl);
   });
 
   // Show skip button after 2 seconds
@@ -89,6 +101,9 @@ function setupEventListeners() {
 
   // Skip button
   elements.skipBtn.addEventListener('click', handleSkip);
+
+  // Cancel redirect button
+  elements.cancelBtn?.addEventListener('click', cancelCountdown);
 
   // Handle browser back/forward
   window.addEventListener('popstate', () => {
@@ -128,6 +143,75 @@ function handleSkip() {
   elements.skipBtn.classList.add('hidden');
   skipAnimation();
   state.isPlaying = false;
+}
+
+/**
+ * Start the countdown timer
+ */
+function startCountdown(redirectUrl) {
+  let seconds = state.countdownSeconds;
+
+  // Reset UI
+  elements.countdownContainer?.classList.remove('cancelled');
+  if (elements.countdownNumber) {
+    elements.countdownNumber.textContent = seconds;
+  }
+  if (elements.countdownProgress) {
+    elements.countdownProgress.style.transform = 'scaleX(1)';
+    elements.countdownProgress.style.transition = 'none';
+  }
+  if (elements.cancelBtn) {
+    elements.cancelBtn.textContent = 'Cancel';
+  }
+
+  // Clear any existing interval
+  if (state.countdownInterval) {
+    clearInterval(state.countdownInterval);
+  }
+
+  // Animate progress bar
+  requestAnimationFrame(() => {
+    if (elements.countdownProgress) {
+      elements.countdownProgress.style.transition = `transform ${state.countdownSeconds}s linear`;
+      elements.countdownProgress.style.transform = 'scaleX(0)';
+    }
+  });
+
+  // Start countdown
+  state.countdownInterval = setInterval(() => {
+    seconds--;
+    if (elements.countdownNumber) {
+      elements.countdownNumber.textContent = seconds;
+    }
+
+    if (seconds <= 0) {
+      clearInterval(state.countdownInterval);
+      state.countdownInterval = null;
+      // Redirect to Claude
+      window.location.href = redirectUrl;
+    }
+  }, 1000);
+}
+
+/**
+ * Cancel the countdown
+ */
+function cancelCountdown() {
+  if (state.countdownInterval) {
+    clearInterval(state.countdownInterval);
+    state.countdownInterval = null;
+  }
+
+  elements.countdownContainer?.classList.add('cancelled');
+  if (elements.countdownNumber) {
+    elements.countdownNumber.textContent = '—';
+  }
+  if (elements.countdownProgress) {
+    elements.countdownProgress.style.transition = 'none';
+  }
+  if (elements.cancelBtn) {
+    elements.cancelBtn.textContent = 'Cancelled';
+  }
 }
 
 // Initialize when DOM is ready
