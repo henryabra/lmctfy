@@ -3,6 +3,8 @@
  * Handles the playback sequence for the demo
  */
 
+import { trackEvent } from './analytics.js';
+
 // Animation state
 let animationState = {
   currentStage: 0,
@@ -150,6 +152,7 @@ function simulateClick(element) {
  */
 export async function playAnimation(query, onComplete) {
   const elements = getElements();
+  trackEvent('animation_start');
 
   // Reset state
   animationState = {
@@ -244,6 +247,7 @@ export async function playAnimation(query, onComplete) {
  */
 function showEnding(query) {
   const elements = getElements();
+  trackEvent('animation_complete');
 
   // Hide skip button
   elements.skipBtn.classList.add('hidden');
@@ -263,6 +267,7 @@ function showEnding(query) {
 export function skipAnimation() {
   animationState.isSkipped = true;
   clearAllTimeouts();
+  trackEvent('animation_skip');
 
   // Get query from URL
   const params = new URLSearchParams(window.location.search);

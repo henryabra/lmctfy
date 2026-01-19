@@ -5,6 +5,7 @@
 
 import { playAnimation, skipAnimation } from './animation.js';
 import { initShare, showShareModal } from './share.js';
+import { trackEvent } from './analytics.js';
 
 // State
 const state = {
@@ -107,6 +108,7 @@ function setupEventListeners() {
 
   // Ask Claude button also cancels countdown
   elements.askClaudeBtn?.addEventListener('click', () => {
+    trackEvent('open_claude', { method: 'button' });
     if (state.countdownInterval) {
       clearInterval(state.countdownInterval);
       state.countdownInterval = null;
@@ -140,6 +142,8 @@ function handleFormSubmit(e) {
   const url = new URL(window.location.pathname, window.location.origin);
   url.searchParams.set('q', query);
 
+  trackEvent('generate_link', { query_length: query.length });
+
   // Show share modal with the generated URL
   showShareModal(url.toString());
 }
@@ -151,6 +155,7 @@ function handleSkip() {
   elements.skipBtn.classList.add('hidden');
   skipAnimation();
   state.isPlaying = false;
+  trackEvent('skip_animation');
 }
 
 /**
@@ -158,6 +163,7 @@ function handleSkip() {
  */
 function startCountdown(redirectUrl) {
   let seconds = state.countdownSeconds;
+  trackEvent('countdown_start');
 
   // Reset UI
   elements.countdownContainer?.classList.remove('cancelled');
@@ -195,8 +201,9 @@ function startCountdown(redirectUrl) {
     if (seconds <= 0) {
       clearInterval(state.countdownInterval);
       state.countdownInterval = null;
-      // Redirect to Claude
-      window.location.href = redirectUrl;
+      trackEvent('open_claude', { method: 'countdown' });
+      // Open Claude in new tab
+      window.open(redirectUrl, '_blank', 'noopener,noreferrer');
     }
   }, 1000);
 }
@@ -210,6 +217,7 @@ function cancelCountdown() {
     state.countdownInterval = null;
   }
 
+  trackEvent('countdown_cancel');
   elements.countdownContainer?.classList.add('cancelled');
   if (elements.countdownNumber) {
     elements.countdownNumber.textContent = '—';

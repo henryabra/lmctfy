@@ -675,6 +675,22 @@ h1 {
   animation: fadeInUp 0.6s var(--ease-out);
 }
 
+.ending-footer {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.ending-footer a {
+  color: var(--claude-orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ending-footer a:hover {
+  color: var(--claude-orange-hover);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

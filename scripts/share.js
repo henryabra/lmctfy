@@ -3,6 +3,8 @@
  * Handles copy, share, and modal functionality
  */
 
+import { trackEvent } from './analytics.js';
+
 // DOM Elements (cached on first use)
 let els = null;
 
@@ -65,6 +67,7 @@ export function showShareModal(url) {
 
   elements.shareUrl.value = url;
   elements.modal.classList.remove('hidden');
+  trackEvent('share_modal_open');
 
   // Focus the URL input and select it
   setTimeout(() => {
@@ -78,6 +81,7 @@ export function showShareModal(url) {
 export function hideShareModal() {
   const elements = getElements();
   elements.modal.classList.add('hidden');
+  trackEvent('share_modal_close');
 }
 
 /**
@@ -89,6 +93,7 @@ async function handleCopy() {
 
   try {
     await navigator.clipboard.writeText(url);
+    trackEvent('copy_link');
 
     // Update button state
     elements.copyBtn.classList.add('copied');
@@ -136,6 +141,7 @@ function handlePreview() {
   const url = elements.shareUrl.value;
   if (!url) return;
 
+  trackEvent('preview_link');
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
@@ -146,6 +152,7 @@ function shareToTwitter() {
   const url = document.getElementById('share-url').value;
   if (!url) return;
 
+  trackEvent('share', { platform: 'twitter' });
   const text = "Let me Claude that for you 🤖";
   const xUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   window.open(xUrl, '_blank');
@@ -158,6 +165,7 @@ function shareToLinkedIn() {
   const url = document.getElementById('share-url').value;
   if (!url) return;
 
+  trackEvent('share', { platform: 'linkedin' });
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
   window.open(linkedinUrl, '_blank');
 }
@@ -173,6 +181,7 @@ async function copyForSlack() {
 
   try {
     await navigator.clipboard.writeText(message);
+    trackEvent('share', { platform: 'slack' });
     showToast('Copied for Slack!');
   } catch (err) {
     showToast('Copy the link manually');

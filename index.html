@@ -18,6 +18,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CWMQ2ENBGP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CWMQ2ENBGP');
+  </script>
+
   <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
@@ -48,7 +57,7 @@
     </main>
 
     <footer class="footer">
-      <p>This is a parody site. Claude is a trademark of <a href="https://anthropic.com" target="_blank" rel="noopener">Anthropic</a>.</p>
+      <p>This is a parody site. Claude is a trademark of <a href="https://anthropic.com" target="_blank" rel="noopener">Anthropic</a>. <a href="https://github.com/henryabra/lmctfy" target="_blank" rel="noopener">GitHub</a></p>
     </footer>
   </div>
 
@@ -150,13 +159,14 @@
         </a>
         <div class="countdown-container">
           <div class="countdown-text">
-            Redirecting in <span id="countdown-number">5</span>s
+            Opening Claude in <span id="countdown-number">5</span>s
           </div>
           <div class="countdown-bar">
             <div id="countdown-progress" class="countdown-progress"></div>
           </div>
           <button id="cancel-redirect" class="btn-cancel">Cancel</button>
         </div>
+        <p class="ending-footer"><a href="https://github.com/henryabra/lmctfy" target="_blank" rel="noopener">GitHub</a></p>
       </div>
     </div>
   </div>
