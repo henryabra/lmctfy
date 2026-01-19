@@ -13,19 +13,20 @@
   --bg-cream: #FAF9F5;
   --bg-card: #E8E4DD;
   --bg-hover: #F5EDE6;
+  --bg-input: #FFFFFF;
 
-  /* Claude Interface Colors (Dark) */
-  --claude-bg: #2D2A26;
-  --claude-bg-light: #3D3833;
-  --claude-input-bg: #454039;
-  --claude-border: #5C564E;
+  /* Claude Interface Colors (Light mode) */
+  --claude-bg: #FAF9F5;
+  --claude-bg-light: #FFFFFF;
+  --claude-input-bg: #F5F3EF;
+  --claude-border: #E5E0D8;
 
   /* Text Colors */
   --text-primary: #1A1A1A;
   --text-secondary: #5C5C5C;
   --text-muted: #8C8C8C;
-  --text-light: #E8E4DD;
-  --text-claude: #F5F5F5;
+  --text-light: #5C5C5C;
+  --text-claude: #1A1A1A;
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -46,6 +47,69 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
   --typing-speed: 80ms;
+}
+
+/* ============================================
+   Dark Mode (System Preference)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Background Colors - exact Claude palette */
+    --bg-cream: #262624;
+    --bg-card: #30302E;
+    --bg-hover: #3D3B39;
+    --bg-input: #30302E;
+
+    /* Claude Interface Colors (Dark mode) */
+    --claude-bg: #2D2A26;
+    --claude-bg-light: #3D3833;
+    --claude-input-bg: #454039;
+    --claude-border: #5C564E;
+
+    /* Text Colors */
+    --text-primary: #F5F5F5;
+    --text-secondary: #9C9A92;
+    --text-muted: #6E6D68;
+    --text-light: #E8E4DD;
+    --text-claude: #F5F5F5;
+
+    /* Shadows (darker for dark mode) */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  /* Adjust specific elements for dark mode */
+  .query-input {
+    border-color: var(--bg-hover);
+  }
+
+  .modal-content {
+    background: var(--bg-card);
+  }
+
+  .share-url {
+    background: var(--bg-cream);
+    border-color: var(--bg-hover);
+  }
+
+  .btn-cancel {
+    border-color: var(--bg-hover);
+  }
+
+  .countdown-bar {
+    background: var(--bg-hover);
+  }
+
+  .skip-btn {
+    background: var(--bg-card);
+    border-color: var(--bg-hover);
+  }
+
+  .skip-btn:hover {
+    background: var(--bg-hover);
+  }
 }
 
 /* ============================================
@@ -176,7 +240,7 @@ h1 {
   width: 100%;
   padding: 1rem 1.25rem;
   font-size: 1rem;
-  background: white;
+  background: var(--bg-input);
   border: 1px solid var(--bg-card);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -255,13 +319,15 @@ h1 {
   right: 1.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--bg-card);
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--claude-border);
   border-radius: var(--radius-sm);
   opacity: 0;
-  transition: opacity 0.3s, background 0.2s;
+  transition: opacity 0.3s, background 0.2s, transform 0.1s;
   z-index: 100;
+  box-shadow: var(--shadow-sm);
 }
 
 .skip-btn:not(.hidden) {
@@ -269,7 +335,12 @@ h1 {
 }
 
 .skip-btn:hover {
-  background: var(--bg-card);
+  background: var(--bg-hover);
+  transform: scale(1.02);
+}
+
+.skip-btn:active {
+  transform: scale(0.98);
 }
 
 /* Stage 1: Branding */
@@ -637,7 +708,7 @@ h1 {
 
 .modal-content {
   position: relative;
-  background: white;
+  background: var(--bg-input);
   padding: 2rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -724,6 +795,28 @@ h1 {
 
 .btn-copy.copied {
   background: #28CA41;
+}
+
+.btn-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.btn-preview svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-preview:hover {
+  background: var(--bg-card);
 }
 
 .share-buttons {

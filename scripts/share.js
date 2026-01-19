@@ -15,6 +15,7 @@ function getElements() {
     modalClose: document.querySelector('.modal-close'),
     shareUrl: document.getElementById('share-url'),
     copyBtn: document.getElementById('copy-btn'),
+    previewBtn: document.getElementById('preview-btn'),
     toast: document.getElementById('toast'),
     toastMessage: document.getElementById('toast-message'),
     shareTwitter: document.getElementById('share-twitter'),
@@ -46,6 +47,9 @@ export function initShare() {
 
   // Copy button
   elements.copyBtn?.addEventListener('click', handleCopy);
+
+  // Preview button
+  elements.previewBtn?.addEventListener('click', handlePreview);
 
   // Social share buttons
   elements.shareTwitter?.addEventListener('click', shareToTwitter);
@@ -122,6 +126,17 @@ function showToast(message, duration = 3000) {
       elements.toast.classList.add('hidden');
     }, 300);
   }, duration);
+}
+
+/**
+ * Handle preview button click
+ */
+function handlePreview() {
+  const elements = getElements();
+  const url = elements.shareUrl.value;
+  if (!url) return;
+
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 /**
