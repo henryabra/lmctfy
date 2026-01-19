@@ -202,8 +202,12 @@ function startCountdown(redirectUrl) {
       clearInterval(state.countdownInterval);
       state.countdownInterval = null;
       trackEvent('open_claude', { method: 'countdown' });
-      // Open Claude in new tab
-      window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+      // Open Claude in new tab, fall back to redirect if blocked
+      const newWindow = window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow) {
+        trackEvent('open_claude', { method: 'countdown_fallback' });
+        window.location.href = redirectUrl;
+      }
     }
   }, 1000);
 }
