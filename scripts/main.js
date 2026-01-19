@@ -113,8 +113,8 @@ function handleFormSubmit(e) {
   const query = elements.queryInput.value.trim();
   if (!query) return;
 
-  // Generate the shareable URL
-  const url = new URL(window.location.origin);
+  // Generate the shareable URL (preserve pathname for GitHub Pages subdirectory)
+  const url = new URL(window.location.pathname, window.location.origin);
   url.searchParams.set('q', query);
 
   // Show share modal with the generated URL
