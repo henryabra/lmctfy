@@ -82,11 +82,24 @@ function showStage(stageElement) {
 
 /**
  * Type text character by character
+ * Uses a fixed total duration and calculates per-character speed
+ * to ensure consistent animation time regardless of text length
  */
-function typeText(text, element, speed = 80) {
+const TYPING_DURATION_MS = 2000; // Fixed total typing animation time
+const MIN_CHAR_SPEED_MS = 30;    // Minimum ms per character for readability
+const MAX_CHAR_SPEED_MS = 150;   // Maximum ms per character for short text
+
+function typeText(text, element, totalDuration = TYPING_DURATION_MS) {
   return new Promise((resolve) => {
     let index = 0;
     element.textContent = '';
+
+    // Calculate speed per character based on text length
+    const textLength = text.length || 1;
+    let charSpeed = Math.floor(totalDuration / textLength);
+
+    // Clamp speed to ensure readability
+    charSpeed = Math.max(MIN_CHAR_SPEED_MS, Math.min(MAX_CHAR_SPEED_MS, charSpeed));
 
     function typeChar() {
       if (animationState.isSkipped) {
@@ -98,7 +111,7 @@ function typeText(text, element, speed = 80) {
       if (index < text.length) {
         element.textContent += text[index];
         index++;
-        scheduleTimeout(typeChar, speed);
+        scheduleTimeout(typeChar, charSpeed);
       } else {
         resolve();
       }
@@ -201,8 +214,8 @@ export async function playAnimation(query, onComplete) {
   await sleep(300);
   if (animationState.isSkipped) return showEnding(query);
 
-  // Type the query
-  await typeText(query, elements.typingText, 80);
+  // Type the query (uses fixed duration, speed adapts to text length)
+  await typeText(query, elements.typingText);
   if (animationState.isSkipped) return showEnding(query);
 
   await sleep(400);
