@@ -878,6 +878,12 @@ h1 {
 .countdown-text {
   font-size: 0.9375rem;
   color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.subscription-disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
   margin-bottom: 0.75rem;
 }
 
