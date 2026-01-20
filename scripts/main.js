@@ -7,6 +7,24 @@ import { playAnimation, skipAnimation } from './animation.js';
 import { initShare, showShareModal } from './share.js';
 import { trackEvent } from './analytics.js';
 
+/**
+ * Encode a string to Base64 (handles Unicode)
+ */
+function encodeQuery(str) {
+  return btoa(encodeURIComponent(str));
+}
+
+/**
+ * Decode a Base64 string (handles Unicode)
+ */
+function decodeQuery(str) {
+  try {
+    return decodeURIComponent(atob(str));
+  } catch {
+    return null;
+  }
+}
+
 // State
 const state = {
   query: null,
@@ -35,10 +53,11 @@ const elements = {
 function init() {
   // Parse URL for query parameter
   const params = new URLSearchParams(window.location.search);
-  const query = params.get('q');
+  const encodedQuery = params.get('q');
+  const query = encodedQuery ? decodeQuery(encodedQuery) : null;
 
   if (query) {
-    // Playback mode (URLSearchParams already decodes)
+    // Playback mode (decode from Base64)
     state.query = query;
     showPlayback();
   } else {
@@ -118,7 +137,8 @@ function setupEventListeners() {
   // Handle browser back/forward
   window.addEventListener('popstate', () => {
     const params = new URLSearchParams(window.location.search);
-    const query = params.get('q');
+    const encodedQuery = params.get('q');
+    const query = encodedQuery ? decodeQuery(encodedQuery) : null;
 
     if (query) {
       state.query = query;
@@ -139,8 +159,9 @@ function handleFormSubmit(e) {
   if (!query) return;
 
   // Generate the shareable URL (preserve pathname for GitHub Pages subdirectory)
+  // Encode query to Base64 so it's not immediately readable in the URL
   const url = new URL(window.location.pathname, window.location.origin);
-  url.searchParams.set('q', query);
+  url.searchParams.set('q', encodeQuery(query));
 
   trackEvent('generate_link', { query_length: query.length });
 
