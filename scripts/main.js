@@ -7,22 +7,29 @@ import { playAnimation, skipAnimation } from './animation.js';
 import { initShare, showShareModal } from './share.js';
 import { trackEvent } from './analytics.js';
 
+// Prefix to identify Base64-encoded queries
+const ENCODED_PREFIX = 'b64.';
+
 /**
- * Encode a string to Base64 (handles Unicode)
+ * Encode a string to Base64 with prefix (handles Unicode)
  */
 function encodeQuery(str) {
-  return btoa(encodeURIComponent(str));
+  return ENCODED_PREFIX + btoa(encodeURIComponent(str));
 }
 
 /**
- * Decode a Base64 string (handles Unicode)
+ * Decode a query string - handles both Base64 (with prefix) and plaintext (legacy)
  */
 function decodeQuery(str) {
-  try {
-    return decodeURIComponent(atob(str));
-  } catch {
-    return null;
+  if (str.startsWith(ENCODED_PREFIX)) {
+    try {
+      return decodeURIComponent(atob(str.slice(ENCODED_PREFIX.length)));
+    } catch {
+      // Invalid Base64, fall through to return as-is
+    }
   }
+  // Legacy plaintext or invalid Base64 - return as-is
+  return str;
 }
 
 // State
@@ -57,7 +64,7 @@ function init() {
   const query = encodedQuery ? decodeQuery(encodedQuery) : null;
 
   if (query) {
-    // Playback mode (decode from Base64)
+    // Playback mode
     state.query = query;
     showPlayback();
   } else {
